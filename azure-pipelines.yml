@@ -29,3 +29,7 @@ stages:
         containerRegistry: 'dockerRegistryServiceConnection'
         tags: 'latest'
         buildContext: '$(Build.Repository.LocalPath)'
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'test'
+        projects: '$(Build.SourcesDirectory)/Checkout.Tests/Checkout.Tests.csproj'
