@@ -35,8 +35,11 @@ namespace Checkout
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseHttpsRedirection();
+            else
+            {
+                app.UseHttpsRedirection();
+                app.UseHsts();
+            }
 
             app.UseRouting();
 
