@@ -32,17 +32,17 @@ as the structure of unit tests don't lend themselves to this.
 1. Build an API that allows a merchant
   * To process a payment through your payment gateway. 
   
-    *This is implemented in **PaymentController** class*
+    *This is implemented in **PaymentController** class.*
 
   * To retrieve details of a previously made payment. 
   
-    *This is implemented in **PaymentHistoryController** class*
+    *This is implemented in **PaymentHistoryController** class.*
 
 2. Build a simulator to mock the responses from the bank to test the API from your first deliverable. 
 
       *This is implemented in **BankSimulator** class. 
       It is used to run the test version of the website and can be swapped out by changing the service configuration in **Startup** class. 
-      No alertative implementation is provided. The simulator is not used in unittesting as mocks provide better control*
+      No alertative implementation is provided. The simulator is not used in unit testing as mocks provide better control.*
 
 ## Extensions
 
@@ -99,11 +99,13 @@ Not done
 Aside from the extensions that have not been completed there are other improvments that could be made: 
 
 * The APIs are incomplete:
-  - /payment requires more attributes are required like client name, address
+  - /payment requires more attributes are required like client name, address, etc.
   - /paymenthistory currently it's only possible to retrive an payment by it's id, 
   allowing users to search by other attributes, such as the payment date, would be useful.
-* The same data objects are used to store the data and send the data over the wire. To allow more 
-flexible versioning it would be better to use two different sets of objects.
+* The same data objects (**Checkout.PublicDtos** namspace) are used to store the data and send the data over the wire. To allow more 
+flexible versioning it could be better to use two different sets of objects.
+* The objects in **Checkout.PublicDtos** are not immutable, as this can cause problems with serialization 
+frameworks, immutable data objects are generally easier to reason about so benefit program correctness.
 * The data objects could be structured better, for example **CheckoutPaymentParameters** might be 
 decomposed into **CreditCardDetails**, containing only attributes relating to the credit card and 
 **Payment** containting the currency and amount.

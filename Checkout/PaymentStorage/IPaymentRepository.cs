@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Checkout.PaymentStorage
 {
-    public interface IPaymentStorage
+    public interface IPaymentRepository
     {
         void SavePayment(CheckoutPaymentRecord paymentRecord);
         CheckoutPaymentRecord? GetPayment(Guid checkoutPaymentId);

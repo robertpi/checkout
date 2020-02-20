@@ -17,28 +17,27 @@ namespace Checkout.Controllers
     public class PaymentController : Controller
     {
         private readonly IBank bank;
-        private readonly IPaymentStorage paymentStorage;
+        private readonly IPaymentRepository paymentRepository;
         private readonly IClock clock;
         private readonly ILogger logger;
 
-        public PaymentController(IBank bank, IPaymentStorage paymentStorage, IClock clock, ILogger<PaymentController> logger)
+        public PaymentController(IBank bank, IPaymentRepository paymentRepository, IClock clock, ILogger<PaymentController> logger)
         {
             this.bank = bank;
-            this.paymentStorage = paymentStorage;
+            this.paymentRepository = paymentRepository;
             this.clock = clock;
             this.logger = logger;
         }
 
         [HttpPost]
-        public CheckoutPaymentResult Post([FromBody]CheckoutPaymentParameters pp)
+        public CheckoutPaymentResult Post([FromBody]CheckoutPaymentParameters paymentParameters)
         {
-            var bankPaymentParameters =
-                new BankPaymentParameters(pp.CardNumber, pp.ExpiryMonth, pp.ExpiryYear, pp.Cvv, pp.Amount, pp.Currency);
+            BankPaymentParameters bankPaymentParameters = CreateBankPaymentParameters(paymentParameters);
 
             var result = bank.ProcessPayment(bankPaymentParameters);
 
-            var paymentRecord = CreatPaymentObject(pp, result);
-            paymentStorage.SavePayment(paymentRecord);
+            var paymentRecord = CreatPaymentObject(paymentParameters, result);
+            paymentRepository.SavePayment(paymentRecord);
 
             return new CheckoutPaymentResult
             {
@@ -47,18 +46,31 @@ namespace Checkout.Controllers
             };
         }
 
-        private CheckoutPaymentRecord CreatPaymentObject(CheckoutPaymentParameters pp, BankPaymentResult result)
+        private static BankPaymentParameters CreateBankPaymentParameters(CheckoutPaymentParameters paymentParameters)
+        {
+            BankPaymentParameters bankPaymentParameters = 
+                new BankPaymentParameters(paymentParameters.CardNumber, 
+                                          paymentParameters.ExpiryMonth, 
+                                          paymentParameters.ExpiryYear, 
+                                          paymentParameters.Cvv, 
+                                          paymentParameters.Amount, 
+                                          paymentParameters.Currency);
+
+            return bankPaymentParameters;
+        }
+
+        private CheckoutPaymentRecord CreatPaymentObject(CheckoutPaymentParameters paymentParameters, BankPaymentResult result)
         {
             var checkoutPaymentId = Guid.NewGuid();
 
             // mask card number before storage to help mitigate issue with storing the card number
-            MaskCardNumber(pp);
+            MaskCardNumber(paymentParameters);
 
             return new CheckoutPaymentRecord
             {
                 CheckoutPaymentId = checkoutPaymentId,
                 BankPaymentId = result.PaymentId?.ToString() ?? "",
-                PaymentParameters = pp,
+                PaymentParameters = paymentParameters,
                 PaymentDate = clock.GetCurrentInstant(),
                 IsSuccessful = result.IsPaymentSuccessful
             };
@@ -69,6 +81,7 @@ namespace Checkout.Controllers
             const int CharctersToKeep = 4;
             if (string.IsNullOrWhiteSpace(pp.CardNumber) || pp.CardNumber.Length < CharctersToKeep)
             {
+                // would be nice to add more details to this log, but could lead to senative data being logged
                 logger.LogError("Received malformed card number");
                 throw new ArgumentException($"Card number should contain at least {CharctersToKeep} characters");
             }

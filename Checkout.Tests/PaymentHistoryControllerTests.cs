@@ -16,15 +16,15 @@ namespace Checkout.Tests
 {
     public class PaymentHistoryControllerTests
     {
-        private Mock<IPaymentStorage> paymentStorageMock;
+        private Mock<IPaymentRepository> paymentRepositoryMock;
         private PaymentHistoryController paymentHistoryController;
         private FakeClock testClock;
 
         [SetUp]
         public void Step()
         {
-            paymentStorageMock = new Mock<IPaymentStorage>();
-            paymentHistoryController = new PaymentHistoryController(paymentStorageMock.Object, Mock.Of<ILogger<PaymentHistoryController>>());
+            paymentRepositoryMock = new Mock<IPaymentRepository>();
+            paymentHistoryController = new PaymentHistoryController(paymentRepositoryMock.Object, Mock.Of<ILogger<PaymentHistoryController>>());
             testClock = new FakeClock(Instant.FromUtc(2020, 2, 19, 19, 3));
         }
 
@@ -43,7 +43,7 @@ namespace Checkout.Tests
                 IsSuccessful = true
             };
 
-            paymentStorageMock.Setup(ps => ps.GetPayment(It.Is<Guid>(x => x == paymentId))).Returns(paymentRecord);
+            paymentRepositoryMock.Setup(ps => ps.GetPayment(It.Is<Guid>(x => x == paymentId))).Returns(paymentRecord);
 
             // test
             var actionResult = paymentHistoryController.Index(paymentId);

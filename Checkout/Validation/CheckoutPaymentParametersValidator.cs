@@ -21,7 +21,7 @@ namespace Checkout.Validation
             RuleFor(pp => pp.Cvv).Length(3, 4); // most have 3 digits, but amex has 4
             RuleFor(pp => pp.Cvv).Matches(@"\d+");
             RuleFor(pp => pp.ExpiryMonth).InclusiveBetween(1, 12);
-            RuleFor(pp => pp.ExpiryYear).Must(ValidDate);
+            RuleFor(pp => pp.ExpiryYear).Must(DateIsInFuture);
             RuleFor(pp => pp.Amount).GreaterThan(0M);
             RuleFor(pp => pp.Currency).NotNull();
             RuleFor(pp => pp.Currency).Length(3);
@@ -30,7 +30,7 @@ namespace Checkout.Validation
             // of ISO currency string
         }
 
-        bool ValidDate(CheckoutPaymentParameters paymentParameters, int expiryYear) 
+        bool DateIsInFuture(CheckoutPaymentParameters paymentParameters, int expiryYear) 
         {
             if (1 > paymentParameters.ExpiryMonth || paymentParameters.ExpiryMonth > 12)
             {

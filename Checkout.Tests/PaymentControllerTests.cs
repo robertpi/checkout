@@ -16,16 +16,16 @@ namespace Checkout.Tests
     public class PaymentControllerTests
     {
         private Mock<IBank> bankMock;
-        private Mock<IPaymentStorage> paymentStorageMock;
+        private Mock<IPaymentRepository> paymentRepositoryMock;
         private PaymentController paymentController;
 
         [SetUp]
         public void Step() 
         {
             bankMock = new Mock<IBank>();
-            paymentStorageMock = new Mock<IPaymentStorage>();
+            paymentRepositoryMock = new Mock<IPaymentRepository>();
             var testClock = new FakeClock(Instant.FromUtc(2020, 2, 19, 19, 3));
-            paymentController = new PaymentController(bankMock.Object, paymentStorageMock.Object, testClock, Mock.Of<ILogger<PaymentController>>());
+            paymentController = new PaymentController(bankMock.Object, paymentRepositoryMock.Object, testClock, Mock.Of<ILogger<PaymentController>>());
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace Checkout.Tests
             // verify 
             // - payment is saved with masked number
             // - status is correct
-            paymentStorageMock.Verify(ps => 
+            paymentRepositoryMock.Verify(ps => 
                 ps.SavePayment(
                     It.Is<CheckoutPaymentRecord>( x => x.PaymentParameters.CardNumber == TestDataGenerator.MaskedCardNumber)), 
                     Times.Once());
@@ -63,7 +63,7 @@ namespace Checkout.Tests
             // verify 
             // - payment is saved with masked number
             // - status is correct
-            paymentStorageMock.Verify(ps =>
+            paymentRepositoryMock.Verify(ps =>
                 ps.SavePayment(
                     It.Is<CheckoutPaymentRecord>(x => x.PaymentParameters.CardNumber == TestDataGenerator.MaskedCardNumber)),
                     Times.Once());
@@ -82,6 +82,5 @@ namespace Checkout.Tests
             // test & assert
             Assert.Throws<ArgumentException>(() => paymentController.Post(paymentParameters));
         }
-
     }
 }

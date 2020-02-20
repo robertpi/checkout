@@ -33,9 +33,11 @@ namespace Checkout
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // use Newtonsoft Json.NET as this is the easiest way to support Noda
             services.AddControllers()
                 .AddNewtonsoftJson(options => options.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
 
+            // ensure all validators are registered
             services.AddMvc()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CheckoutPaymentParametersValidator>());
 
@@ -44,8 +46,9 @@ namespace Checkout
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
             });
 
+            // regiser noda and our custom services
             services.AddSingleton<IClock>(SystemClock.Instance);
-            services.AddSingleton<IPaymentStorage, InMemoryPaymentStorage>();
+            services.AddSingleton<IPaymentRepository, InMemoryPaymentRepository>();
             services.AddSingleton<IBank, BankSimulator>();
         }
 
@@ -58,6 +61,7 @@ namespace Checkout
             }
             else
             {
+                // not on in development mode to enable development without a self-signed certificate
                 app.UseHttpsRedirection();
                 app.UseHsts();
             }
@@ -66,6 +70,7 @@ namespace Checkout
 
             app.UseAuthorization();
 
+            // active swagger and the associated UI
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs"));
 

@@ -13,19 +13,19 @@ namespace Checkout.Controllers
     [Route("[controller]")]
     public class PaymentHistoryController : Controller
     {
-        private readonly IPaymentStorage paymentStorage;
+        private readonly IPaymentRepository paymentRepository;
         private readonly ILogger logger;
 
-        public PaymentHistoryController(IPaymentStorage paymentStorage, ILogger<PaymentHistoryController> logger)
+        public PaymentHistoryController(IPaymentRepository paymentRepository, ILogger<PaymentHistoryController> logger)
         {
-            this.paymentStorage = paymentStorage;
+            this.paymentRepository = paymentRepository;
             this.logger = logger;
         }
 
         [HttpGet]
         public ActionResult<CheckoutPaymentRecord> Index(Guid checkoutPaymentId)
         {
-            var record = paymentStorage.GetPayment(checkoutPaymentId);
+            var record = paymentRepository.GetPayment(checkoutPaymentId);
 
             if (record == null)
             {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Checkout.PaymentStorage
 {
-    public class InMemoryPaymentStorage : IPaymentStorage
+    public class InMemoryPaymentRepository : IPaymentRepository
     {
         private readonly ConcurrentDictionary<Guid, CheckoutPaymentRecord> payments 
             = new ConcurrentDictionary<Guid, CheckoutPaymentRecord>();
