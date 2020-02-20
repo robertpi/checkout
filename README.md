@@ -48,9 +48,11 @@ as the structure of unit tests don't lend themselves to this.
 
 ### Application logging 
 
-I have added minimalist logging where I thought necessary. I'm assuming the default ASP.NET Core MVC 
-configuration is good enough for our perposes and the ASP.NET core does necessary logging of requests
-and exceptions by default. To be really useful the logs would need to be shipped
+I have added minimalist logging where I thought necessary. The default ASP.NET Core MVC 
+configuration is good enough for our perposes and will also log any uncaught exception. 
+This is why there's little or no exception handling.
+
+To be really useful the logs would need to be shipped
 somehow to a centralize log storage service, but this has not been implmented.
 
 ### Application metrics 
