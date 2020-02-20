@@ -10,6 +10,7 @@ namespace Checkout.PublicDtos
     {
         public CheckoutPaymentParameters() 
         {
+            // avoids compiler nullable warnings
             CardNumber = "";
             Cvv = "";
             Currency = "";

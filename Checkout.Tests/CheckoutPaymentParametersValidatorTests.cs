@@ -15,16 +15,7 @@ namespace Checkout.Tests
         [SetUp]
         public void Setup()
         {
-            targetPaymentParameters = new CheckoutPaymentParameters()
-            {
-                // number taken from: https://www.easy400.net/js2/regexp/ccnums.html
-                CardNumber = "5500000000000004",
-                Cvv = "124",
-                ExpiryMonth = 11,
-                ExpiryYear = 2020,
-                Amount = 11M,
-                Currency = "EUR"
-            };
+            targetPaymentParameters = TestDataGenerator.CreateValidPaymentParameters();
             var testClock = new FakeClock(Instant.FromUtc(2020, 2, 19, 19, 3));
             validator = new CheckoutPaymentParametersValidator(testClock);
         }
