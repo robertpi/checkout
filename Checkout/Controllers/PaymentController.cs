@@ -7,6 +7,7 @@ using Checkout.PaymentStorage;
 using Checkout.PublicDtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NodaTime;
 
 namespace Checkout.Controllers
@@ -18,12 +19,14 @@ namespace Checkout.Controllers
         private readonly IBank bank;
         private readonly IPaymentStorage paymentStorage;
         private readonly IClock clock;
+        private readonly ILogger logger;
 
-        public PaymentController(IBank bank, IPaymentStorage paymentStorage, IClock clock)
+        public PaymentController(IBank bank, IPaymentStorage paymentStorage, IClock clock, ILogger<PaymentController> logger)
         {
             this.bank = bank;
             this.paymentStorage = paymentStorage;
             this.clock = clock;
+            this.logger = logger;
         }
 
         [HttpPost]
@@ -54,18 +57,19 @@ namespace Checkout.Controllers
             return new CheckoutPaymentRecord
             {
                 CheckoutPaymentId = checkoutPaymentId,
-                BankPaymentId = result.PaymentId?.ToString(),
+                BankPaymentId = result.PaymentId?.ToString() ?? "",
                 PaymentParameters = pp,
                 PaymentDate = clock.GetCurrentInstant(),
                 IsSuccessful = result.IsPaymentSuccessful
             };
         }
 
-        private static void MaskCardNumber(CheckoutPaymentParameters pp)
+        private void MaskCardNumber(CheckoutPaymentParameters pp)
         {
             const int CharctersToKeep = 4;
             if (string.IsNullOrWhiteSpace(pp.CardNumber) || pp.CardNumber.Length < CharctersToKeep)
             {
+                logger.LogError("Received malformed card number");
                 throw new ArgumentException($"Card number should contain at least {CharctersToKeep} characters");
             }
             var maskedLength = pp.CardNumber.Length - 4;

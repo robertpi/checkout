@@ -44,12 +44,9 @@ namespace Checkout
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
             });
 
-            var paymentStorage = new InMemoryPaymentStorage();
-            var bank = new BankSimulator();
-
-            services.AddTransient<IClock>(_ => SystemClock.Instance);
-            services.AddTransient<IPaymentStorage>(_ => paymentStorage);
-            services.AddTransient<IBank>(_ => bank);
+            services.AddSingleton<IClock>(SystemClock.Instance);
+            services.AddSingleton<IPaymentStorage, InMemoryPaymentStorage>();
+            services.AddSingleton<IBank, BankSimulator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

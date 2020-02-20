@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Checkout.PaymentStorage;
 using Checkout.PublicDtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Checkout.Controllers
 {
@@ -13,10 +14,12 @@ namespace Checkout.Controllers
     public class PaymentHistoryController : Controller
     {
         private readonly IPaymentStorage paymentStorage;
+        private readonly ILogger logger;
 
-        public PaymentHistoryController(IPaymentStorage paymentStorage)
+        public PaymentHistoryController(IPaymentStorage paymentStorage, ILogger<PaymentHistoryController> logger)
         {
             this.paymentStorage = paymentStorage;
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -26,6 +29,7 @@ namespace Checkout.Controllers
 
             if (record == null)
             {
+                logger.LogWarning($"Couldn't find payment associated with requested checkoutPaymentId: {checkoutPaymentId}");
                 return NotFound();
             }
 

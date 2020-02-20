@@ -2,6 +2,7 @@
 using Checkout.Controllers;
 using Checkout.PaymentStorage;
 using Checkout.PublicDtos;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NodaTime;
 using NodaTime.Testing;
@@ -24,7 +25,7 @@ namespace Checkout.Tests
             bankMock = new Mock<IBank>();
             paymentStorageMock = new Mock<IPaymentStorage>();
             var testClock = new FakeClock(Instant.FromUtc(2020, 2, 19, 19, 3));
-            paymentController = new PaymentController(bankMock.Object, paymentStorageMock.Object, testClock);
+            paymentController = new PaymentController(bankMock.Object, paymentStorageMock.Object, testClock, Mock.Of<ILogger<PaymentController>>());
         }
 
         [Test]

@@ -3,6 +3,7 @@ using Checkout.Controllers;
 using Checkout.PaymentStorage;
 using Checkout.PublicDtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NodaTime;
 using NodaTime.Testing;
@@ -23,7 +24,7 @@ namespace Checkout.Tests
         public void Step()
         {
             paymentStorageMock = new Mock<IPaymentStorage>();
-            paymentHistoryController = new PaymentHistoryController(paymentStorageMock.Object);
+            paymentHistoryController = new PaymentHistoryController(paymentStorageMock.Object, Mock.Of<ILogger<PaymentHistoryController>>());
             testClock = new FakeClock(Instant.FromUtc(2020, 2, 19, 19, 3));
         }
 
