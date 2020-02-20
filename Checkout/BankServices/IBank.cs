@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Checkout.BankServices
 {
-    interface IBank
+    public interface IBank
     {
         public BankPaymentResult ProcessPayment(BankPaymentParameters parameters);
     }

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Checkout.BankServices;
+using Checkout.PaymentStorage;
 using Checkout.Validation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using NodaTime;
+using NodaTime.Serialization.JsonNet;
 using Swashbuckle;
 
 namespace Checkout
@@ -30,7 +33,9 @@ namespace Checkout
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson(options => options.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
+
             services.AddMvc()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CheckoutPaymentParametersValidator>());
 
@@ -38,7 +43,13 @@ namespace Checkout
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
             });
+
+            var paymentStorage = new InMemoryPaymentStorage();
+            var bank = new BankSimulator();
+
             services.AddTransient<IClock>(_ => SystemClock.Instance);
+            services.AddTransient<IPaymentStorage>(_ => paymentStorage);
+            services.AddTransient<IBank>(_ => bank);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Checkout.PaymentStorage;
 using Checkout.PublicDtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,24 @@ namespace Checkout.Controllers
     [Route("[controller]")]
     public class PaymentHistoryController : Controller
     {
-        [HttpGet]
-        public CheckoutPaymentParameters Index(Guid paymentId)
+        private readonly IPaymentStorage paymentStorage;
+
+        public PaymentHistoryController(IPaymentStorage paymentStorage)
         {
-            return new CheckoutPaymentParameters();
+            this.paymentStorage = paymentStorage;
+        }
+
+        [HttpGet]
+        public ActionResult<CheckoutPaymentRecord> Index(Guid checkoutPaymentId)
+        {
+            var record = paymentStorage.GetPayment(checkoutPaymentId);
+
+            if (record == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(record);
         }
     }
 }

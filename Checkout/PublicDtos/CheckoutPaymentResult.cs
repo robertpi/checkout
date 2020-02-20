@@ -7,7 +7,7 @@ namespace Checkout.PublicDtos
 {
     public class CheckoutPaymentResult
     {
-        public Guid? PaymentId { get; set; }
+        public Guid CheckoutPaymentId { get; set; }
         public bool IsPaymentSuccessful { get; set; }
     }
 }
