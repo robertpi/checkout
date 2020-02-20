@@ -19,7 +19,7 @@ namespace Checkout.PaymentStorage
         }
 
         // returns null if key not found
-        CheckoutPaymentRecord IPaymentStorage.GetPayment(Guid checkoutPaymentId)
+        public CheckoutPaymentRecord? GetPayment(Guid checkoutPaymentId)
         {
             payments.TryGetValue(checkoutPaymentId, out var paymentRecord);
             return paymentRecord;

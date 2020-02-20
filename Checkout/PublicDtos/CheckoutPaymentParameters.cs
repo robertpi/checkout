@@ -8,6 +8,13 @@ namespace Checkout.PublicDtos
 {
     public class CheckoutPaymentParameters
     {
+        public CheckoutPaymentParameters() 
+        {
+            CardNumber = "";
+            Cvv = "";
+            Currency = "";
+        }
+
         public string CardNumber { get; set; }
         public string Cvv { get; set; }
         public int ExpiryMonth { get; set; }

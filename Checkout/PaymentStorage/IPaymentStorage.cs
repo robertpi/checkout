@@ -9,6 +9,6 @@ namespace Checkout.PaymentStorage
     public interface IPaymentStorage
     {
         void SavePayment(CheckoutPaymentRecord paymentRecord);
-        CheckoutPaymentRecord GetPayment(Guid checkoutPaymentId);
+        CheckoutPaymentRecord? GetPayment(Guid checkoutPaymentId);
     }
 }
