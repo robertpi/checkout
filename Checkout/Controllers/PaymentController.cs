@@ -64,7 +64,7 @@ namespace Checkout.Controllers
         private static void MaskCardNumber(CheckoutPaymentParameters pp)
         {
             const int CharctersToKeep = 4;
-            if (pp.CardNumber.Length < CharctersToKeep)
+            if (string.IsNullOrWhiteSpace(pp.CardNumber) || pp.CardNumber.Length < CharctersToKeep)
             {
                 throw new ArgumentException($"Card number should contain at least {CharctersToKeep} characters");
             }

@@ -7,6 +7,6 @@ namespace Checkout.BankServices
 {
     public interface IBank
     {
-        public BankPaymentResult ProcessPayment(BankPaymentParameters parameters);
+        BankPaymentResult ProcessPayment(BankPaymentParameters parameters);
     }
 }
